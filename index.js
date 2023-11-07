@@ -5,20 +5,44 @@ function bmiCalculator(weight, height) {
     return bmi.toFixed(1);
 }
 
-function updateResultColor(bmi) {
+function bmiCategory(bmi) {
+    if (bmi < 18.5) {
+        return {category: "Untergewicht", class: "text-primary"};
+    } else if (bmi < 25) {
+        return {category: "Normalgewicht", class: "text-success"};
+    } else if (bmi < 30) {
+        return {category: "Übergewicht", class: "text-warning"};
+    } else {
+        return {category: "Adipositas", class: "text-danger"};
+    }
+}
+
+function updateResult(bmi, height, weight) {
     let result = document.getElementById("result");
+    let categoryInfo = bmiCategory(bmi);
 
     result.classList.remove("text-primary", "text-success", "text-warning", "text-danger");
+    result.classList.add(categoryInfo.class);
 
+    result.innerHTML = `
+    Ihr BMI ist: ${bmi} <br>
+    Kategorie: ${categoryInfo.category}
+    `;
+
+    // Normalgewichtsbereich berechnen
+    let minWeight = 18.5 * Math.pow(height, 2);
+    let maxWeight = 24.9 * Math.pow(height, 2);
+
+    // Differenz zum Normalgewicht
     if (bmi < 18.5) {
-        result.classList.add("text-primary");
-    } else if (bmi < 25) {
-        result.classList.add("text-success");
-    } else if (bmi < 30) {
-        result.classList.add("text-warning");
+        result.innerHTML += `<br>Sie sind untergewichtig und müssten etwa ${(minWeight - weight).toFixed(1)} kg zunehmen, um das Normalgewicht für Ihre Größe zu erreichen.`;
+    } else if (bmi > 24.9) {
+        result.innerHTML += `<br>Sie sind übergewichtig und müssten etwa ${(weight - maxWeight).toFixed(1)} kg abnehmen, um das Normalgewicht für Ihre Größe zu erreichen.`;
     } else {
-        result.classList.add("text-danger");
+        result.innerHTML += `<br>Sie haben Normalgewicht.`;
     }
+
+    result.innerHTML += `<br>Der Normalgewichtsbereich für Ihre Größe liegt zwischen ${minWeight.toFixed(1)} kg und ${maxWeight.toFixed(1)} kg.`;
 }
 
 
@@ -33,7 +57,7 @@ window.addEventListener("load", function () {
         if (weight > 0 && height > 0) {
             let bmi = bmiCalculator(weight, height);
             result.innerText = "Ihr BMI ist: " + bmi;
-            updateResultColor(bmi);
+            updateResult(bmi, height, weight);
         } else {
             result.innerText = "";
         }
