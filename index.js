@@ -17,49 +17,51 @@ function bmiCategory(bmi) {
     }
 }
 
-function updateResult(bmi, height, weight) {
-    let result = document.getElementById("result");
-    let categoryInfo = bmiCategory(bmi);
-
-    result.classList.remove("text-primary", "text-success", "text-warning", "text-danger");
-    result.classList.add(categoryInfo.class);
-
-    result.innerHTML = `
-    Ihr BMI ist: ${bmi} <br>
-    Kategorie: ${categoryInfo.category}
-    `;
-
+function updateDescription(bmi, height, weight) {
     // Normalgewichtsbereich berechnen
     let minWeight = 18.5 * Math.pow(height, 2);
     let maxWeight = 24.9 * Math.pow(height, 2);
 
+    let description = "";
+
     // Differenz zum Normalgewicht
     if (bmi < 18.5) {
-        result.innerHTML += `<br>Sie sind untergewichtig und müssten etwa ${(minWeight - weight).toFixed(1)} kg zunehmen, um das Normalgewicht für Ihre Größe zu erreichen.`;
+        description += `<br/>Sie sind untergewichtig und müssten etwa ${(minWeight - weight).toFixed(1)} kg zunehmen, um das Normalgewicht für Ihre Größe zu erreichen.`;
     } else if (bmi > 24.9) {
-        result.innerHTML += `<br>Sie sind übergewichtig und müssten etwa ${(weight - maxWeight).toFixed(1)} kg abnehmen, um das Normalgewicht für Ihre Größe zu erreichen.`;
+        description += `<br/>Sie sind übergewichtig und müssten etwa ${(weight - maxWeight).toFixed(1)} kg abnehmen, um das Normalgewicht für Ihre Größe zu erreichen.`;
     } else {
-        result.innerHTML += `<br>Sie haben Normalgewicht.`;
+        description += `<br/>Sie haben Normalgewicht.`;
     }
 
-    result.innerHTML += `<br>Der Normalgewichtsbereich für Ihre Größe liegt zwischen ${minWeight.toFixed(1)} kg und ${maxWeight.toFixed(1)} kg.`;
+    description += `<br/>Der Normalgewichtsbereich für Ihre Größe liegt zwischen ${minWeight.toFixed(1)} kg und ${maxWeight.toFixed(1)} kg.`;
+    return description;
 }
 
 
 window.addEventListener("load", function () {
     let weightInput = document.getElementById("weight");
     let heightInput = document.getElementById("height");
-    let result = document.getElementById("result");
+    let bmiValue = document.getElementById("bmiValue");
+    let bmiDescription = document.getElementById("bmiDescription");
+
 
     function updateBMI() {
         let weight = parseFloat(weightInput.value);
         let height = parseFloat(heightInput.value);
+        
         if (weight > 0 && height > 0) {
             let bmi = bmiCalculator(weight, height);
-            result.innerText = "Ihr BMI ist: " + bmi;
-            updateResult(bmi, height, weight);
+            let categoryInfo = bmiCategory(bmi);
+
+            bmiValue.classList.remove("text-primary", "text-success", "text-warning", "text-danger");
+            bmiValue.classList.add(categoryInfo.class);
+
+            bmiValue.innerText = `Ihr BMI ist: ${bmi}`; // Groß und farbig
+            bmiDescription.innerHTML = `Kategorie: ${categoryInfo.category}<br/>`; // Normal
+            bmiDescription.innerHTML += updateDescription(bmi, height, weight);
         } else {
-            result.innerText = "";
+            bmiValue.innerText = "";
+            bmiDescription.innerHTML = "";
         }
     }
 
