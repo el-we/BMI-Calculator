@@ -37,34 +37,35 @@ function updateDescription(bmi, height, weight) {
     return description;
 }
 
+jQuery(document).ready(function($) {
 
-window.addEventListener("load", function () {
-    let weightInput = document.getElementById("weight");
-    let heightInput = document.getElementById("height");
-    let bmiValue = document.getElementById("bmiValue");
-    let bmiDescription = document.getElementById("bmiDescription");
-
+    let weightInput = $("#weight");
+    let heightInput = $("#height");
+    let bmiValue = $("#bmiValue");
+    let bmiDescription = $("#bmiDescription");
 
     function updateBMI() {
-        let weight = parseFloat(weightInput.value);
-        let height = parseFloat(heightInput.value);
-        
+        let weight = parseFloat(weightInput.val());
+        let height = parseFloat(heightInput.val());
+
         if (weight > 0 && height > 0) {
             let bmi = bmiCalculator(weight, height);
             let categoryInfo = bmiCategory(bmi);
 
-            bmiValue.classList.remove("text-primary", "text-success", "text-warning", "text-danger");
-            bmiValue.classList.add(categoryInfo.class);
+            bmiValue
+                .removeClass("text-primary text-success text-warning text-danger")
+                .addClass(categoryInfo.class)
+                .text(`Ihr BMI ist: ${bmi}`);
 
-            bmiValue.innerText = `Ihr BMI ist: ${bmi}`; // Groß und farbig
-            bmiDescription.innerHTML = `Kategorie: ${categoryInfo.category}<br/>`; // Normal
-            bmiDescription.innerHTML += updateDescription(bmi, height, weight);
+            bmiDescription
+                .html(`Kategorie: ${categoryInfo.category}<br/>`)
+                .append(updateDescription(bmi, height, weight));
         } else {
-            bmiValue.innerText = "";
-            bmiDescription.innerHTML = "";
+            bmiValue.text("");
+            bmiDescription.html("");
         }
     }
 
-    weightInput.addEventListener("input", updateBMI);
-    heightInput.addEventListener("input", updateBMI);
-} );
+    weightInput.on('input', updateBMI);
+    heightInput.on('input',updateBMI);
+});
